@@ -1,21 +1,17 @@
 package com.example.relationgestionhopital;
 
-import com.example.relationgestionhopital.entities.Consultation;
+import com.example.relationgestionhopital.entities.*;
 import com.example.relationgestionhopital.entities.Enumarate.statusRDV;
-import com.example.relationgestionhopital.entities.Medecin;
-import com.example.relationgestionhopital.entities.Patient;
-import com.example.relationgestionhopital.entities.RendezVous;
-import com.example.relationgestionhopital.repository.ConsultationRepository;
-import com.example.relationgestionhopital.repository.MedecinRepository;
-import com.example.relationgestionhopital.repository.PatientRepository;
-import com.example.relationgestionhopital.repository.RendezVousRepository;
+import com.example.relationgestionhopital.repository.*;
 import com.example.relationgestionhopital.services.HopitalImpl;
+import com.example.relationgestionhopital.services.UserImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Stream;
 
 @SpringBootApplication
@@ -30,8 +26,10 @@ public class RelationGestionHopitalApplication {
             MedecinRepository medecinRepository,
             PatientRepository patientRepository,
             RendezVousRepository rendezVousRepository,
+            UserRepository userRepository,
             ConsultationRepository consultationRepository,
-            HopitalImpl hopitalImp
+            HopitalImpl hopitalImp,
+            UserImpl userImp
     ){
         return args->{
             Stream.of("Bienvenu", "Esso", "Mounirou")
@@ -69,7 +67,43 @@ public class RelationGestionHopitalApplication {
             consultation.setRendezvous(rendezVous1);
             consultation.setRapportConsulatation("votre rapport de consulatation est : ");
             hopitalImp.saveConsultation(consultation);
+
+            User user1 = new User();
+            user1.setPassword("123456");
+            user1.setUsername("dimitri");
+            userImp.addUser(user1);
+            User user2 = new User();
+            user2.setPassword("123456");
+            user2.setUsername("rafiou");
+            userImp.addUser(user2);
+
+            Role role1 = new Role();
+            role1.setRoleName("ADMIN");
+            userImp.addRole(role1);
+            userImp.findAddUsernameByRoleName("dimitri", "ADMIN");
+
+            try {
+                User user = userImp.authenticate("dimitri","123456");
+                System.out.println(user.getUsername());
+                user.getRole().forEach(r->{
+                    System.out.println("Roles =>"+r.toString());
+                });
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
+
+
+
+
+
+
+
             };
+
+
+
+
 
 
 
